@@ -7,6 +7,7 @@
 ## Inputs
 
 - **FaceAssembly** (geometry)
+- **thickness** (number)
 
 
 
