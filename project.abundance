@@ -8,10 +8,6 @@
     {
       "name": "FaceAssembly",
       "ioValue": "__GEOMETRY_INPUT__"
-    },
-    {
-      "name": "thickness",
-      "ioValue": 10
     }
   ],
   "topLevel": true,
@@ -37,30 +33,19 @@
         {
           "name": "faces",
           "ioValue": "__GEOMETRY_INPUT__"
-        },
-        {
-          "name": "thickness",
-          "ioValue": 1
         }
       ],
       "interpreterVersion": 1,
-      "code": "\nfunction run(faces: Assembly, thickness: number = 1) {\n  const resultingLeafs: Assembly[] = []\n  faces.onLeafs((leaf) => {\n    const face = (leaf.geometry instanceof replicad.Face) ? leaf.geometry : leaf.geometry.faces[0]\n\n    const offset = replicad.makeOffset(face, thickness);\n    const w1 = replicad.assembleWire(face.edges);\n    const w2 = replicad.assembleWire(offset.edges);\n    const boundary = replicad.loft([w2, w1], {}, true);\n    const solid = replicad.makeSolid([face, offset, boundary]).simplify();\n\n    resultingLeafs.push(new Assembly({\n      ...leaf,\n      geometry: solid\n    }))\n    return leaf;\n  })\n  return resultingLeafs;\n}\n\n/*function run(faces: Assembly) {\n  const faceList: any[] = []\n  faces.onLeafs((leaf) => {\n    if (leaf.geometry instanceof replicad.Face) {\n      faceList.push(leaf.geometry)\n      return leaf;\n    } else if (leaf.is3D()) {\n      if (leaf.geometry instanceof replicad.Shell) {\n        faceList.push(leaf.geometry)\n      } else {\n        console.warn(\"got a non-face non-shell entry. attempting to extract it's faces\")\n        console.log(leaf.geometry instanceof replicad.Compound)\n        for (const face of leaf.geometry.faces) {\n          faceList.push(face);\n        }\n      }\n      return leaf;\n    } else {\n      throw Error(\"input must be faces or other 3dshape.\")\n    }\n  });\n  return replicad.makeSolid([replicad.weldShellsAndFaces(faceList)]);\n}*/",
-      "compiledCode": "\"use strict\";\nfunction run(faces, thickness = 1) {\n    const resultingLeafs = [];\n    faces.onLeafs((leaf) => {\n        const face = (leaf.geometry instanceof replicad.Face) ? leaf.geometry : leaf.geometry.faces[0];\n        const offset = replicad.makeOffset(face, thickness);\n        const w1 = replicad.assembleWire(face.edges);\n        const w2 = replicad.assembleWire(offset.edges);\n        const boundary = replicad.loft([w2, w1], {}, true);\n        const solid = replicad.makeSolid([face, offset, boundary]).simplify();\n        resultingLeafs.push(new Assembly({\n            ...leaf,\n            geometry: solid\n        }));\n        return leaf;\n    });\n    return resultingLeafs;\n}\n/*function run(faces: Assembly) {\n  const faceList: any[] = []\n  faces.onLeafs((leaf) => {\n    if (leaf.geometry instanceof replicad.Face) {\n      faceList.push(leaf.geometry)\n      return leaf;\n    } else if (leaf.is3D()) {\n      if (leaf.geometry instanceof replicad.Shell) {\n        faceList.push(leaf.geometry)\n      } else {\n        console.warn(\"got a non-face non-shell entry. attempting to extract it's faces\")\n        console.log(leaf.geometry instanceof replicad.Compound)\n        for (const face of leaf.geometry.faces) {\n          faceList.push(face);\n        }\n      }\n      return leaf;\n    } else {\n      throw Error(\"input must be faces or other 3dshape.\")\n    }\n  });\n  return replicad.makeSolid([replicad.weldShellsAndFaces(faceList)]);\n}*/ \n"
+      "code": "function run(faces: Assembly) {\n  const faceList: any[] = []\n  faces.onLeafs((leaf) => {\n    if (leaf.geometry instanceof replicad.Face) {\n      faceList.push(leaf.geometry)\n      return leaf;\n    } else if (leaf.is3D()) {\n      if (leaf.geometry instanceof replicad.Shell) {\n        faceList.push(leaf.geometry)\n      } else {\n        console.warn(\"got a non-face non-shell entry. attempting to extract it's faces\")\n        console.log(leaf.geometry instanceof replicad.Compound)\n        for (const face of leaf.geometry.faces) {\n          faceList.push(face);\n        }\n      }\n      return leaf;\n    } else {\n      throw Error(\"input must be faces or other 3dshape.\")\n    }\n  });\n\n  let comp = replicad.weldShellsAndFaces(faceList, true)\n  const shells = Array.from(replicad.iterTopo(comp.wrapped, \"shell\"))\n  comp = replicad.makeSolid(shells.map(replicad.cast))\n  return comp\n}",
+      "compiledCode": "\"use strict\";\nfunction run(faces) {\n    const faceList = [];\n    faces.onLeafs((leaf) => {\n        if (leaf.geometry instanceof replicad.Face) {\n            faceList.push(leaf.geometry);\n            return leaf;\n        }\n        else if (leaf.is3D()) {\n            if (leaf.geometry instanceof replicad.Shell) {\n                faceList.push(leaf.geometry);\n            }\n            else {\n                console.warn(\"got a non-face non-shell entry. attempting to extract it's faces\");\n                console.log(leaf.geometry instanceof replicad.Compound);\n                for (const face of leaf.geometry.faces) {\n                    faceList.push(face);\n                }\n            }\n            return leaf;\n        }\n        else {\n            throw Error(\"input must be faces or other 3dshape.\");\n        }\n    });\n    let comp = replicad.weldShellsAndFaces(faceList, true);\n    const shells = Array.from(replicad.iterTopo(comp.wrapped, \"shell\"));\n    comp = replicad.makeSolid(shells.map(replicad.cast));\n    return comp;\n}\n"
     },
     {
       "atomType": "Input",
-      "x": 0.0231,
-      "y": 0.14,
+      "x": 0.025384615384615384,
+      "y": 0.15384615384615385,
       "uniqueID": "id-22566",
       "name": "FaceAssembly",
       "type": "geometry"
-    },
-    {
-      "atomType": "Input",
-      "x": 0.0231,
-      "y": 0.22400000000000003,
-      "uniqueID": "id-22574",
-      "name": "thickness"
     }
   ],
   "allConnectors": [
