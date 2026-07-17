@@ -42,7 +42,7 @@
     {
       "atomType": "Input",
       "x": 0.025384615384615384,
-      "y": 0.41714285714285715,
+      "y": 0.15384615384615385,
       "uniqueID": "id-22566",
       "name": "FaceAssembly",
       "type": "geometry"
